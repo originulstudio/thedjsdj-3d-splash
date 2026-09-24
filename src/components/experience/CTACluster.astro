@@ -1,0 +1,33 @@
+---
+import { artist, connectLinks, listenLinks, watchLinks } from "@/config/artist";
+import ExternalLink from "@/components/ui/ExternalLink.astro";
+---
+<section class="chapter chapter-exit" id="exit">
+  <p class="kicker">SELECT A CHANNEL</p>
+  <div id="listen">
+    <p class="group-label">LISTEN</p>
+    <div class="stack">
+      {listenLinks.map((link) => <ExternalLink href={link.href} label={link.label} />)}
+    </div>
+  </div>
+  <div id="watch">
+    <p class="group-label">WATCH</p>
+    <div class="stack">
+      {watchLinks.map((link) => <ExternalLink href={link.href} label={link.label} />)}
+    </div>
+  </div>
+  <div id="connect">
+    <p class="group-label">CONNECT</p>
+    <div class="stack">
+      {connectLinks.map((link) => <ExternalLink href={link.href} label={link.label} />)}
+    </div>
+  </div>
+  <footer class="footer-line">
+    <span>© {artist.year} {artist.entity}</span>
+    <a href={artist.links.originul} target="_blank" rel="noopener noreferrer">
+      <img class="originul" src={artist.originulMark} alt="Originul" />
+    </a>
+    <img class="stamp" src={artist.scanner} alt="" />
+    <a href="#signal" data-return>RETURN TO THE SIGNAL</a>
+  </footer>
+</section>

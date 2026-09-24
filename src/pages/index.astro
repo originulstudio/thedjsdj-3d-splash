@@ -1,0 +1,57 @@
+---
+import Base from "@/layouts/Base.astro";
+import Header from "@/components/chrome/Header.astro";
+import MenuOverlay from "@/components/chrome/MenuOverlay.astro";
+import ProgressIndicator from "@/components/chrome/ProgressIndicator.astro";
+import CTACluster from "@/components/experience/CTACluster.astro";
+import SceneFallback from "@/components/experience/SceneFallback.astro";
+import { artist } from "@/config/artist";
+---
+<Base>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <SceneFallback />
+  <Header />
+  <ProgressIndicator />
+  <p class="chrome chrome-br hint" data-hint>MOVE THROUGH THE FIELD</p>
+  <MenuOverlay />
+  <div id="loader" role="status" aria-live="polite">
+    <p>TUNING THE VOID</p>
+    <div class="loader-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="5">
+      <span data-loader-bar></span>
+    </div>
+    <p class="meta">SIGNAL ACQUIRING</p>
+  </div>
+  <main data-experience>
+    <section class="chapter chapter-hero" id="signal">
+      <p class="kicker">TRANSMISSION ACTIVE</p>
+      <h1 class="display">{artist.name}</h1>
+      <p class="line">NO FIXED ORIGIN</p>
+      <a class="enter" href="#orbit">ENTER ORBIT</a>
+      <img class="sr-only" src={artist.portrait} alt="THE DJ$ DJ in profile, wearing headphones, facing the light." />
+    </section>
+    <section class="chapter chapter-orbit" id="orbit">
+      <div class="orbit-copy">
+        <p class="kicker">FREQUENCY: UNKNOWN</p>
+        <p class="line">SOUND HAS A GRAVITATIONAL FIELD.</p>
+      </div>
+    </section>
+    <section class="chapter chapter-figure" id="figure">
+      <div class="figure-copy">
+        <p class="kicker">SIGNAL FOUND</p>
+        <p class="display" aria-hidden="true">{artist.name}</p>
+        <div class="actions">
+          <a href="#listen">LISTEN</a>
+          <a href="#watch">WATCH</a>
+        </div>
+      </div>
+    </section>
+    <CTACluster />
+  </main>
+</Base>
+<script>
+  import { boot } from "@/lib/boot";
+  boot();
+</script>
+---

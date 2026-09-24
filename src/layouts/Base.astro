@@ -1,0 +1,39 @@
+---
+import "../styles/global.css";
+import { artist } from "@/config/artist";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = "THE DJ$ DJ",
+  description = "TRANSMISSION ACTIVE. A signal from THE DJ$ DJ. No fixed location.",
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050506" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/assets/images/og.jpg" />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#listen">Skip to channels</a>
+    <slot />
+    <p class="sr-only">{artist.name}. Transmission. Essential links remain in the page.</p>
+  </body>
+</html>
