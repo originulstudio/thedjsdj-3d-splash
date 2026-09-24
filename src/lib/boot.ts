@@ -77,6 +77,11 @@ export function boot(): void {
     scene = new SceneController(canvas, state, () => undefined);
     void scene.mountFigure().then(() => scene.start());
   });
+  canvas.addEventListener("webglcontextlost", (event) => {
+    event.preventDefault();
+    scene.stop();
+    showFallback(true);
+  });
 
   let hintGone = false;
   let menuOpen = false;

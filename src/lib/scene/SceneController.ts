@@ -47,8 +47,8 @@ export class SceneController {
     this.field = createStarfield(limits.stars, limits.dust, limits.signal);
     this.scene.add(this.field.group);
     this.scene.add(this.relic.group);
-    if (limits.post) {
-      this.grade = createPostProcessing(window.innerWidth, window.innerHeight, this.renderer.getPixelRatio());
+    if (limits.post && !state.reduced) {
+      this.grade = createPostProcessing(this.renderer, window.innerWidth, window.innerHeight, this.renderer.getPixelRatio());
     }
   }
 
@@ -80,7 +80,11 @@ export class SceneController {
     this.camera.updateProjectionMatrix();
     this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(width, height, false);
-    this.grade?.setSize(width, height, dpr);
+    try {
+      this.grade?.setSize(width, height, dpr);
+    } catch {
+      this.dropGrade();
+    }
     this.state.dirty = true;
     if (this.state.reduced) this.renderOnce();
   };
@@ -123,7 +127,7 @@ export class SceneController {
   };
 
   private compose(dt: number): void {
-    this.time += this.state.reduced ? dt * 0.15 : dt;
+    this.time += this.state.reduced ? 0 : dt;
     const scroll = this.state.scroll;
     const targetOpen = scroll < 0.2 ? scroll / 0.2 : scroll < 0.72 ? 1 : 1 - (scroll - 0.72) / 0.28;
     const targetReveal = MathUtils.clamp((scroll - 0.42) / 0.22, 0, 1);
@@ -155,9 +159,9 @@ export class SceneController {
     const spread = 1 + this.open * 0.18 + this.state.pulse * 0.08 + this.state.audioLow * 0.06;
     relic.scale.setScalar(narrow ? 0.78 * spread : spread);
     relic.position.x = narrow ? 0 : -0.55 - this.reveal * 0.55;
-    relic.position.y = Math.sin(this.time * 0.45) * (this.state.reduced ? 0.01 : 0.06);
-    relic.rotation.y = this.spin + px * 0.35 + this.state.seed * 0.2;
-    relic.rotation.x = 0.18 + py * 0.2;
+    relic.position.y = this.state.reduced ? 0 : Math.sin(this.time * 0.45) * 0.06;
+    relic.rotation.y = this.state.reduced ? this.state.seed * 0.2 : this.spin + px * 0.35 + this.state.seed * 0.2;
+    relic.rotation.x = this.state.reduced ? 0.18 : 0.18 + py * 0.2;
 
     this.relic.coreMat.uniforms.uTime.value = this.time;
     this.relic.coreMat.uniforms.uOpen.value = this.open;
@@ -195,9 +199,9 @@ export class SceneController {
       this.figure.material.uniforms.uTime.value = this.time;
       this.figure.material.uniforms.uReveal.value = this.reveal;
       this.figure.material.uniforms.uOpacity.value = this.figureOpacity;
-      this.figure.material.uniforms.uDisp.value = this.state.reduced ? 0 : 0.025 + this.state.audioLow * 0.05;
-      this.figure.material.uniforms.uSplit.value = 0.003 + this.state.chroma * 0.02 + this.state.audioHigh * 0.008;
-      this.figure.material.uniforms.uGrid.value = 0.08 + (0.5 + 0.5 * Math.sin(this.time * 0.35)) * 0.45;
+      this.figure.material.uniforms.uDisp.value = this.state.reduced ? 0 : 0.008 + this.state.audioLow * 0.02;
+      this.figure.material.uniforms.uSplit.value = this.state.reduced ? 0.001 : 0.002 + this.state.audioHigh * 0.004;
+      this.figure.material.uniforms.uGrid.value = this.state.reduced ? 0.05 : 0.12;
       this.figure.material.uniforms.uAudio.value = this.state.audioMid;
       if (this.figure.pointsMat) {
         this.figure.pointsMat.uniforms.uTime.value = this.time;
@@ -211,11 +215,26 @@ export class SceneController {
   }
 
   private draw(): void {
-    if (this.grade) {
+    if (!this.grade) {
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
+    try {
       this.grade.render(this.renderer, () => this.renderer.render(this.scene, this.camera));
-    } else {
+    } catch {
+      this.dropGrade();
+      this.renderer.setRenderTarget(null);
       this.renderer.render(this.scene, this.camera);
     }
+  }
+
+  private dropGrade(): void {
+    try {
+      this.grade?.dispose();
+    } catch {
+      /* target already invalid */
+    }
+    this.grade = null;
   }
 
   dispose(): void {

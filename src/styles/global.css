@@ -115,12 +115,26 @@ html[data-tier="high"] .grain { opacity: 0.08; }
 .chrome-br { bottom: calc(env(safe-area-inset-bottom) + 0.9rem); right: var(--pad); max-width: 11rem; text-align: right; }
 
 .word {
-  font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  text-decoration: none;
-  color: var(--ember);
-  font-size: 1.05rem;
+  width: 7.2rem;
+  height: auto;
+  display: block;
+}
+
+.identity {
+  margin: 0;
+  width: min(92vw, 44rem);
+}
+
+.identity img,
+.identity-quiet {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.identity-quiet {
+  width: min(70vw, 22rem);
+  margin: 0.4rem 0 0.2rem;
 }
 
 .icon-btn, .text-btn {

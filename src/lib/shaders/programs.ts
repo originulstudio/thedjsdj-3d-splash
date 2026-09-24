@@ -161,11 +161,11 @@ varying float vAlpha;
 
 void main() {
   vec3 p = position;
-  p.z += sin(uTime * 0.5 + position.y * 6.0) * 0.03 * aLum;
+  p.z += sin(uTime * 0.5 + position.y * 6.0) * 0.012 * aLum;
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
   float reveal = smoothstep(0.0, 0.15, uReveal - (0.5 - position.y * 0.5));
-  gl_PointSize = uSize * aLum * reveal * (240.0 / max(1.0, -mv.z));
+  gl_PointSize = uSize * aLum * reveal * (72.0 / max(1.0, -mv.z));
   vLum = aLum;
   vAlpha = reveal;
 }

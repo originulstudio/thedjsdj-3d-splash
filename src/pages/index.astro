@@ -26,7 +26,9 @@ import { artist } from "@/config/artist";
   <main data-experience>
     <section class="chapter chapter-hero" id="signal">
       <p class="kicker">TRANSMISSION ACTIVE</p>
-      <h1 class="display">{artist.name}</h1>
+      <h1 class="identity">
+        <img src={artist.wordmark} alt="THE DJ$ DJ" />
+      </h1>
       <p class="line">NO FIXED ORIGIN</p>
       <a class="enter" href="#orbit">ENTER ORBIT</a>
       <img class="sr-only" src={artist.portrait} alt="THE DJ$ DJ in profile, wearing headphones, facing the light." />
@@ -40,7 +42,7 @@ import { artist } from "@/config/artist";
     <section class="chapter chapter-figure" id="figure">
       <div class="figure-copy">
         <p class="kicker">SIGNAL FOUND</p>
-        <p class="display" aria-hidden="true">{artist.name}</p>
+        <img class="identity-quiet" src={artist.wordmark} alt="" />
         <div class="actions">
           <a href="#listen">LISTEN</a>
           <a href="#watch">WATCH</a>

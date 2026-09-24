@@ -10,6 +10,8 @@ export const artist = {
   credit: "ORIGINUL",
   portrait: "/assets/images/figure.jpg",
   portraitAlt: "/assets/images/figure-alt.jpg",
+  wordmark: "/assets/brand/wordmark.png",
+  wordmarkQuiet: "/assets/brand/wordmark-quiet.png",
   mark: "/assets/brand/mark.svg",
   scanner: "/assets/brand/scanner.svg",
   originulMark: "/assets/brand/originul.svg",
