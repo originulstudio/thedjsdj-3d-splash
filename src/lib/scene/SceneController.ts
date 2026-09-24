@@ -1,4 +1,4 @@
-import { MathUtils, Raycaster, Vector2, Vector3 } from "three";
+import { MathUtils, Mesh, MeshBasicMaterial, PlaneGeometry, PointLight, Raycaster, TextureLoader, Vector2, Vector3 } from "three";
 import { TIER, type ChapterId, type QualityTier } from "@/config/artDirection";
 import { damp } from "@/lib/utils/math";
 import { disposeObject } from "@/lib/utils/dispose";
@@ -22,6 +22,7 @@ export class SceneController {
   private field: ParticleField;
   private figure: ArtistFigure | null = null;
   private grade: GradePass | null = null;
+  private scanner: Mesh | null = null;
   private running = false;
   private time = 0;
   private last = 0;
@@ -43,10 +44,25 @@ export class SceneController {
     this.renderer = createRenderer(canvas, limits.maxDpr);
     this.camera = createCamera();
     this.scene = createStage();
-    this.relic = createSignalRelic(limits.relicDetail, limits.shards);
     this.field = createStarfield(limits.stars, limits.dust, limits.signal);
     this.scene.add(this.field.group);
+    const ember = new PointLight(0xff3333, 8, 12, 2);
+    ember.position.set(0.4, 0.2, 1.2);
+    const ion = new PointLight(0x4cc9ff, 4, 14, 2);
+    ion.position.set(-1.6, 0.8, 2.2);
+    this.scene.add(ember, ion);
+    const segments = state.tier === "high" ? 64 : 40;
+    this.relic = createSignalRelic(this.renderer, segments, Math.min(limits.shards, 18));
     this.scene.add(this.relic.group);
+    new TextureLoader().load("/assets/brand/scanner.svg", (tex) => {
+      const plate = new Mesh(
+        new PlaneGeometry(16, 9),
+        new MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.045, depthWrite: false }),
+      );
+      plate.position.set(0, 0.2, -26);
+      this.scanner = plate;
+      this.scene.add(plate);
+    });
     if (limits.post && !state.reduced) {
       this.grade = createPostProcessing(this.renderer, window.innerWidth, window.innerHeight, this.renderer.getPixelRatio());
     }
@@ -138,8 +154,8 @@ export class SceneController {
     this.open = damp(this.open, targetOpen, 2.4, dt);
     this.reveal = damp(this.reveal, this.state.reduced ? (scroll > 0.45 ? 1 : 0) : targetReveal, 2.2, dt);
     this.figureOpacity = damp(this.figureOpacity, targetOpacity, 2.2, dt);
-    this.camZ = damp(this.camZ, targetZ, 2, dt);
-    this.camX = damp(this.camX, targetX, 2, dt);
+    this.camZ = damp(this.camZ, targetZ, 1.15, dt);
+    this.camX = damp(this.camX, targetX, 1.15, dt);
     this.state.pulse = damp(this.state.pulse, 0, 3.5, dt);
     this.state.charge = damp(this.state.charge, this.state.pulse, 4, dt);
     this.state.chroma = damp(this.state.chroma, 0, 2.5, dt);
@@ -163,23 +179,18 @@ export class SceneController {
     relic.rotation.y = this.state.reduced ? this.state.seed * 0.2 : this.spin + px * 0.35 + this.state.seed * 0.2;
     relic.rotation.x = this.state.reduced ? 0.18 : 0.18 + py * 0.2;
 
-    this.relic.coreMat.uniforms.uTime.value = this.time;
-    this.relic.coreMat.uniforms.uOpen.value = this.open;
-    this.relic.coreMat.uniforms.uAudio.value = this.state.audioLow;
-    this.relic.coreMat.uniforms.uCharge.value = 0.15 + this.state.charge + this.state.audioHigh * 0.5;
+    const charge = 0.15 + this.state.charge + this.state.audioHigh * 0.8;
+    this.relic.physical.envMapIntensity = 1.55 + charge * 0.7 + this.state.audioLow * 0.4;
+    this.relic.physical.emissive.set("#ff3333");
+    this.relic.physical.emissiveIntensity = 0.04 + charge * 0.08;
     if (this.relic.shardMat) {
       this.relic.shardMat.uniforms.uTime.value = this.time;
       this.relic.shardMat.uniforms.uCharge.value = this.state.charge + this.state.audioMid;
-      this.relic.shardMat.uniforms.uOpen.value = this.open;
-    }
-    if (this.relic.ringMat) {
-      this.relic.ringMat.uniforms.uTime.value = this.time;
-      this.relic.ringMat.uniforms.uAudio.value = this.state.audioMid;
-      this.relic.ringMat.uniforms.uCharge.value = 0.25 + this.state.audioHigh * 0.4;
     }
     if (this.relic.home) {
-      this.relic.home.scale.setScalar(1 + this.open * 0.22 + this.state.pulse * 0.12);
+      this.relic.home.scale.setScalar(1 + this.open * 0.08 + this.state.pulse * 0.06);
     }
+    if (this.scanner && !this.state.reduced) this.scanner.rotation.z = this.time * 0.03;
 
     this.field.update(
       this.time,

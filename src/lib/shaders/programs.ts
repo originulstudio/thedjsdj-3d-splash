@@ -205,13 +205,13 @@ export const particleFragment = /* glsl */ `
 precision highp float;
 uniform vec3 uColor;
 uniform float uAlpha;
+uniform sampler2D uMap;
 varying float vScale;
 
 void main() {
-  vec2 d = gl_PointCoord - vec2(0.5);
-  float disc = 1.0 - smoothstep(0.32, 0.5, length(d));
-  if (disc < 0.04) discard;
-  gl_FragColor = vec4(uColor, disc * uAlpha * (0.35 + vScale));
+  vec4 sprite = texture2D(uMap, gl_PointCoord);
+  if (sprite.a < 0.04) discard;
+  gl_FragColor = vec4(uColor, sprite.a * uAlpha * (0.55 + vScale * 0.4));
 }
 `;
 

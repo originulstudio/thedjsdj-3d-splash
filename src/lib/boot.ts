@@ -21,7 +21,7 @@ export function boot(): void {
   const menuButton = document.querySelector<HTMLButtonElement>("[data-menu-button]");
   const soundButton = document.querySelector<HTMLButtonElement>("[data-sound]");
   const hint = document.querySelector<HTMLElement>("[data-hint]");
-  const chapterLabel = document.querySelector<HTMLElement>("[data-chapter]");
+  const chapterLabel = document.querySelector<HTMLElement>("[data-chapter-label]");
   const reduceButton = document.querySelector<HTMLButtonElement>("[data-reduce]");
   if (!canvas || !loader || !menu || !menuButton || !soundButton || !chapterLabel) return;
 

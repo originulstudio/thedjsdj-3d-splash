@@ -76,7 +76,7 @@ export async function createArtistFigure(pointBudget: number): Promise<ArtistFig
         if (lum < 0.16 || x > width * 0.7 || y < height * 0.08) continue;
         const nx = (x / width - 0.5) * planeW;
         const ny = (0.5 - y / height) * planeH;
-        positions.push(nx, ny, (lum - 0.4) * 0.18);
+        positions.push(nx, ny, (lum - 0.35) * 0.55);
         lums.push(lum);
         if (positions.length / 3 >= pointBudget) break;
       }

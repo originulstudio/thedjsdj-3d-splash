@@ -115,27 +115,71 @@ html[data-tier="high"] .grain { opacity: 0.08; }
 .chrome-br { bottom: calc(env(safe-area-inset-bottom) + 0.9rem); right: var(--pad); max-width: 11rem; text-align: right; }
 
 .word {
-  width: 7.2rem;
+  width: 5.6rem;
   height: auto;
   display: block;
 }
 
 .identity {
-  margin: 0;
-  width: min(92vw, 44rem);
+  margin: 0 0 0.6rem;
 }
 
-.identity img,
-.identity-quiet {
-  width: 100%;
+.identity img {
+  width: min(68vw, 28rem);
   height: auto;
-  display: block;
+  mix-blend-mode: difference;
 }
 
-.identity-quiet {
-  width: min(70vw, 22rem);
-  margin: 0.4rem 0 0.2rem;
+.copy {
+  position: fixed;
+  z-index: 4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  mix-blend-mode: difference;
 }
+
+body[data-chapter="intro"] .chapter-hero .copy,
+body[data-chapter="orbit"] .chapter-orbit .copy,
+body[data-chapter="figure"] .chapter-figure .copy,
+body[data-chapter="outro"] .chapter-exit .copy {
+  opacity: 1;
+  visibility: visible;
+}
+
+.copy a, .copy button { pointer-events: auto; }
+
+.copy-center {
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(88vw, 36rem);
+}
+
+.copy-left {
+  left: var(--pad);
+  top: 42%;
+  max-width: 18rem;
+}
+
+.copy-exit {
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 46rem);
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem 2rem;
+}
+
+.copy-center .line { margin-left: auto; margin-right: auto; }
 
 .icon-btn, .text-btn {
   appearance: none;
@@ -199,13 +243,13 @@ main[data-experience] { position: relative; z-index: 3; }
 
 .enter {
   margin-top: 1.4rem;
-  align-self: flex-start;
   text-decoration: none;
   border: 1px solid var(--silver);
   padding: 0.75rem 1rem;
   letter-spacing: 0.18em;
   color: var(--void);
   background: var(--silver);
+  mix-blend-mode: normal;
 }
 
 .orbit-copy, .figure-copy, .exit-copy { max-width: 40rem; }
@@ -388,11 +432,8 @@ html[data-motion="reduced"] .relic-css { animation: none; }
   50% { transform: translate(-50%, -52%) rotate(8deg); }
 }
 
-@media (min-width: 900px) {
-  .chapter-hero { justify-content: flex-end; }
-  .display { font-size: clamp(6rem, 12vw, 12rem); }
-  .fallback-figure { width: 18rem; right: 12vw; }
-  .relic-css { width: 28rem; left: 46%; }
+@media (min-width: 800px) {
+  .channel-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 720px) {

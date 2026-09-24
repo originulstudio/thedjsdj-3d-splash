@@ -1,3 +1,4 @@
+import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -28,15 +29,32 @@ export function bindScroll(onProgress: (progress: number) => void, reduced: bool
     registered = true;
   }
 
+  const lenis = new Lenis({
+    lerp: 0.075,
+    smoothWheel: true,
+    syncTouch: false,
+    anchors: true,
+  });
+  lenis.on("scroll", () => ScrollTrigger.update());
+  const tick = (time: number) => {
+    lenis.raf(time * 1000);
+  };
+  gsap.ticker.add(tick);
+  gsap.ticker.lagSmoothing(0);
+
   const trigger = ScrollTrigger.create({
     trigger: root,
     start: "top top",
     end: "bottom bottom",
-    scrub: 0.45,
+    scrub: 1.5,
     onUpdate: (self) => onProgress(self.progress),
   });
   read();
-  return () => trigger.kill();
+  return () => {
+    trigger.kill();
+    gsap.ticker.remove(tick);
+    lenis.destroy();
+  };
 }
 
 export function playMenu(open: boolean): void {
